@@ -123,5 +123,29 @@
     "description": "Framework for adding new types of chests to the game.",
     "uniqueID": "furyx639.ExpandedStorage",
     "stars": 0
+  },
+  {
+    "owner": "khgamestudio",
+    "repo": "build-anywhere",
+    "displayName": "Build Anywhere",
+    "description": "Till ground and plant crops on non-farm locations like Railroad, Secret Woods, Backwoods, and Desert.",
+    "uniqueID": "khgames.BuildAnywhere",
+    "stars": 0
+  },
+  {
+    "owner": "khgamestudio",
+    "repo": "energy-saver",
+    "displayName": "Energy Saver",
+    "description": "Reduce or eliminate energy costs for specific tools via configurable sliders.",
+    "uniqueID": "khgames.EnergySaver",
+    "stars": 0
+  },
+  {
+    "owner": "khgamestudio",
+    "repo": "better-fish-bait",
+    "displayName": "Better Fish Bait",
+    "description": "Prevents bait from being consumed on trash catches and when targeted bait catches the wrong fish.",
+    "uniqueID": "khgames.BetterFishBait",
+    "stars": 0
   }
 ]
