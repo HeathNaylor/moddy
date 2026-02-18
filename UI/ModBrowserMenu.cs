@@ -33,7 +33,6 @@ namespace Moddy.UI
 
         // UI state
         private SearchBar _searchBar = null!;
-        private int _currentPage;
         private int _selectedIndex = -1;
         private int _hoveredIndex = -1;
         private bool _isBusy;
@@ -42,6 +41,15 @@ namespace Moddy.UI
         private ModSource? _sourceFilter;
         private int _refreshTicks;
         private int _detailButtonY;
+
+        // Scroll state
+        private int _scrollOffset;
+        private bool _isDragging;
+        private int _dragStartY;
+        private int _dragStartScroll;
+        private bool _dragMoved;
+        private int _listContentTop;
+        private int _visibleListHeight;
 
         // Source filter tab labels
         private static readonly string[] TabLabels = { "All", "GitHub", "Nexus" };
@@ -53,8 +61,6 @@ namespace Moddy.UI
         private Rectangle _searchBounds;
         private Rectangle[] _tabBounds = Array.Empty<Rectangle>();
         private ClickableTextureComponent _closeButton = null!;
-        private ClickableTextureComponent _prevButton = null!;
-        private ClickableTextureComponent _nextButton = null!;
 
         public ModBrowserMenu()
             : base(0, 0, Game1.uiViewport.Width, Game1.uiViewport.Height, showUpperRightCloseButton: false)
@@ -64,8 +70,8 @@ namespace Moddy.UI
 
         private void Initialize()
         {
-            // Calculate layout
-            int margin = 64;
+            // Calculate layout — responsive margin for smaller screens (Steam Deck)
+            int margin = Math.Clamp(Game1.uiViewport.Height / 12, 32, 64);
             _panelBounds = new Rectangle(
                 margin, margin,
                 width - margin * 2, height - margin * 2
@@ -81,6 +87,10 @@ namespace Moddy.UI
 
             _listBounds = new Rectangle(innerX, innerY, listWidth, innerHeight);
             _detailBounds = new Rectangle(innerX + listWidth + UIConstants.PanelPadding, innerY, detailWidth, innerHeight);
+
+            // List content area (below search bar)
+            _listContentTop = _listBounds.Y + 56;
+            _visibleListHeight = _listBounds.Bottom - _listContentTop;
 
             // Search bar at top of list area
             _searchBounds = new Rectangle(innerX, _panelBounds.Y + UIConstants.PanelPadding + 48, listWidth, 48);
@@ -103,25 +113,6 @@ namespace Moddy.UI
                 new Rectangle(_panelBounds.Right - 48, _panelBounds.Y, 48, 48),
                 Game1.mouseCursors,
                 new Rectangle(337, 494, 12, 12),
-                4f
-            );
-
-            // Pagination buttons
-            _prevButton = new ClickableTextureComponent(
-                "prev",
-                new Rectangle(_listBounds.X, _listBounds.Bottom - 44, 48, 44),
-                null, "Previous page",
-                Game1.mouseCursors,
-                new Rectangle(352, 495, 12, 11),
-                4f
-            );
-
-            _nextButton = new ClickableTextureComponent(
-                "next",
-                new Rectangle(_listBounds.Right - 48, _listBounds.Bottom - 44, 48, 44),
-                null, "Next page",
-                Game1.mouseCursors,
-                new Rectangle(365, 495, 12, 11),
                 4f
             );
 
@@ -240,18 +231,15 @@ namespace Moddy.UI
                 return true;
             }).ToList();
 
-            _currentPage = 0;
+            _scrollOffset = 0;
             _selectedIndex = -1;
         }
 
-        private int TotalPages => Math.Max(1, (int)Math.Ceiling(_filteredCatalog.Count / (float)UIConstants.ItemsPerPage));
+        private int MaxScroll => Math.Max(0, _filteredCatalog.Count * UIConstants.RowHeight - _visibleListHeight);
 
-        private List<CatalogEntry> GetPageItems()
+        private void ClampScroll()
         {
-            return _filteredCatalog
-                .Skip(_currentPage * UIConstants.ItemsPerPage)
-                .Take(UIConstants.ItemsPerPage)
-                .ToList();
+            _scrollOffset = Math.Clamp(_scrollOffset, 0, MaxScroll);
         }
 
         private CatalogEntry? SelectedEntry =>
@@ -259,11 +247,15 @@ namespace Moddy.UI
                 ? _filteredCatalog[_selectedIndex]
                 : null;
 
-        private void FetchDetailsForPage()
+        private void FetchDetailsForVisible()
         {
-            var items = GetPageItems();
-            foreach (var item in items)
+            int firstVisible = Math.Max(0, _scrollOffset / UIConstants.RowHeight - 1);
+            int lastVisible = Math.Min(_filteredCatalog.Count - 1,
+                (_scrollOffset + _visibleListHeight) / UIConstants.RowHeight + 1);
+
+            for (int idx = firstVisible; idx <= lastVisible; idx++)
             {
+                var item = _filteredCatalog[idx];
                 if (!item.IsFromCatalog)
                     continue;
 
@@ -394,7 +386,7 @@ namespace Moddy.UI
                     };
                     Game1.playSound("smallSelect");
                     ApplyFilter();
-                    FetchDetailsForPage();
+                    FetchDetailsForVisible();
                     return;
                 }
             }
@@ -402,37 +394,15 @@ namespace Moddy.UI
             // Search bar
             _searchBar.ReceiveLeftClick(x, y);
 
-            // Pagination
-            if (_prevButton.containsPoint(x, y) && _currentPage > 0)
+            // Start drag in list content area (item selection deferred to releaseLeftClick)
+            if (x >= _listBounds.X && x <= _listBounds.Right &&
+                y >= _listContentTop && y < _listContentTop + _visibleListHeight)
             {
-                _currentPage--;
-                _selectedIndex = -1;
-                Game1.playSound("shwip");
-                FetchDetailsForPage();
+                _isDragging = true;
+                _dragStartY = y;
+                _dragStartScroll = _scrollOffset;
+                _dragMoved = false;
                 return;
-            }
-            if (_nextButton.containsPoint(x, y) && _currentPage < TotalPages - 1)
-            {
-                _currentPage++;
-                _selectedIndex = -1;
-                Game1.playSound("shwip");
-                FetchDetailsForPage();
-                return;
-            }
-
-            // List item click
-            var items = GetPageItems();
-            int listContentY = _listBounds.Y + 56; // below search
-            for (int i = 0; i < items.Count; i++)
-            {
-                var rowRect = new Rectangle(_listBounds.X, listContentY + i * UIConstants.RowHeight, _listBounds.Width, UIConstants.RowHeight - 4);
-                if (rowRect.Contains(x, y))
-                {
-                    _selectedIndex = _currentPage * UIConstants.ItemsPerPage + i;
-                    Game1.playSound("smallSelect");
-                    FetchDetailsForPage();
-                    return;
-                }
             }
 
             // Detail panel buttons (only for catalog mods)
@@ -694,25 +664,57 @@ namespace Moddy.UI
             _statusExpiry = DateTime.UtcNow.AddSeconds(durationSeconds);
         }
 
+        public override void leftClickHeld(int x, int y)
+        {
+            if (_isDragging)
+            {
+                int delta = _dragStartY - y;
+                _scrollOffset = _dragStartScroll + delta;
+                ClampScroll();
+                if (Math.Abs(delta) > 4)
+                    _dragMoved = true;
+            }
+        }
+
+        public override void releaseLeftClick(int x, int y)
+        {
+            if (_isDragging)
+            {
+                if (!_dragMoved)
+                {
+                    // Treat as a click — select the item under the cursor
+                    int itemIndex = (y - _listContentTop + _scrollOffset) / UIConstants.RowHeight;
+                    if (itemIndex >= 0 && itemIndex < _filteredCatalog.Count &&
+                        y >= _listContentTop && y < _listContentTop + _visibleListHeight)
+                    {
+                        _selectedIndex = itemIndex;
+                        Game1.playSound("smallSelect");
+                        FetchDetailsForVisible();
+                    }
+                }
+                _isDragging = false;
+            }
+        }
+
+        public override void receiveScrollWheelAction(int direction)
+        {
+            _scrollOffset -= direction > 0 ? UIConstants.RowHeight : -UIConstants.RowHeight;
+            ClampScroll();
+            FetchDetailsForVisible();
+        }
+
         public override void performHoverAction(int x, int y)
         {
             _hoveredIndex = -1;
-            var items = GetPageItems();
-            int listContentY = _listBounds.Y + 56;
 
-            for (int i = 0; i < items.Count; i++)
+            if (y >= _listContentTop && y < _listContentTop + _visibleListHeight)
             {
-                var rowRect = new Rectangle(_listBounds.X, listContentY + i * UIConstants.RowHeight, _listBounds.Width, UIConstants.RowHeight - 4);
-                if (rowRect.Contains(x, y))
-                {
-                    _hoveredIndex = _currentPage * UIConstants.ItemsPerPage + i;
-                    break;
-                }
+                int itemIndex = (y - _listContentTop + _scrollOffset) / UIConstants.RowHeight;
+                if (itemIndex >= 0 && itemIndex < _filteredCatalog.Count)
+                    _hoveredIndex = itemIndex;
             }
 
             _closeButton.tryHover(x, y);
-            _prevButton.tryHover(x, y);
-            _nextButton.tryHover(x, y);
         }
 
         public override void receiveKeyPress(Keys key)
@@ -832,20 +834,33 @@ namespace Moddy.UI
 
         private void DrawModList(SpriteBatch b)
         {
-            var items = GetPageItems();
-            int listContentY = _listBounds.Y + 56;
+            // Set up scissor clipping for the list content area
+            var clipRect = new Rectangle(_listBounds.X, _listContentTop, _listBounds.Width, _visibleListHeight);
+            b.End();
 
-            for (int i = 0; i < items.Count; i++)
+            var prevScissor = b.GraphicsDevice.ScissorRectangle;
+            b.GraphicsDevice.ScissorRectangle = clipRect;
+            var rasterizerState = new RasterizerState { ScissorTestEnable = true };
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+                null, rasterizerState);
+
+            int totalItems = _filteredCatalog.Count;
+            for (int i = 0; i < totalItems; i++)
             {
-                var entry = items[i];
-                int globalIndex = _currentPage * UIConstants.ItemsPerPage + i;
-                var rowRect = new Rectangle(_listBounds.X, listContentY + i * UIConstants.RowHeight, _listBounds.Width, UIConstants.RowHeight - 4);
+                int rowY = _listContentTop + i * UIConstants.RowHeight - _scrollOffset;
+
+                // Skip rows fully outside visible area
+                if (rowY + UIConstants.RowHeight < _listContentTop || rowY > _listContentTop + _visibleListHeight)
+                    continue;
+
+                var entry = _filteredCatalog[i];
+                var rowRect = new Rectangle(_listBounds.X, rowY, _listBounds.Width, UIConstants.RowHeight - 4);
 
                 // Row background
                 Color rowColor;
-                if (globalIndex == _selectedIndex)
+                if (i == _selectedIndex)
                     rowColor = UIConstants.RowSelected;
-                else if (globalIndex == _hoveredIndex)
+                else if (i == _hoveredIndex)
                     rowColor = UIConstants.RowHover;
                 else
                     rowColor = UIConstants.RowNormal;
@@ -915,19 +930,27 @@ namespace Moddy.UI
                 }
             }
 
-            // Pagination
-            if (TotalPages > 1)
-            {
-                if (_currentPage > 0)
-                    _prevButton.draw(b);
-                if (_currentPage < TotalPages - 1)
-                    _nextButton.draw(b);
+            // Restore sprite batch
+            b.End();
+            b.GraphicsDevice.ScissorRectangle = prevScissor;
+            b.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-                var pageText = $"Page {_currentPage + 1} / {TotalPages}";
-                var pageSize = Game1.smallFont.MeasureString(pageText);
-                b.DrawString(Game1.smallFont, pageText,
-                    new Vector2(_listBounds.X + _listBounds.Width / 2f - pageSize.X / 2f, _listBounds.Bottom - 36),
-                    UIConstants.TextGray);
+            // Draw scrollbar if content overflows
+            int totalContentHeight = totalItems * UIConstants.RowHeight;
+            if (totalContentHeight > _visibleListHeight)
+            {
+                int trackX = _listBounds.Right - UIConstants.ScrollbarWidth;
+                var trackRect = new Rectangle(trackX, _listContentTop, UIConstants.ScrollbarWidth, _visibleListHeight);
+                b.Draw(Game1.fadeToBlackRect, trackRect, UIConstants.ScrollbarTrack);
+
+                float thumbRatio = (float)_visibleListHeight / totalContentHeight;
+                int thumbHeight = Math.Max(20, (int)(thumbRatio * _visibleListHeight));
+                int maxScroll = MaxScroll;
+                float scrollRatio = maxScroll > 0 ? (float)_scrollOffset / maxScroll : 0f;
+                int thumbY = _listContentTop + (int)(scrollRatio * (_visibleListHeight - thumbHeight));
+
+                var thumbRect = new Rectangle(trackX, thumbY, UIConstants.ScrollbarWidth, thumbHeight);
+                b.Draw(Game1.fadeToBlackRect, thumbRect, UIConstants.ScrollbarThumb);
             }
         }
 

@@ -9,7 +9,11 @@ namespace Moddy.UI
         // Panel dimensions
         public const int PanelPadding = 16;
         public const int RowHeight = 80;
-        public const int ItemsPerPage = 8;
+
+        // Scrollbar
+        public const int ScrollbarWidth = 8;
+        public static readonly Color ScrollbarTrack = new(80, 80, 80);
+        public static readonly Color ScrollbarThumb = new(160, 160, 160);
 
         // List/detail split
         public const float ListWidthRatio = 0.58f;
