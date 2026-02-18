@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableModDeploy>true</EnableModDeploy>
+    <EnableModZip>true</EnableModZip>
+    <EnableHarmony>true</EnableHarmony>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\catalog.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Data\nexus_catalog.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="assets\ModsButton.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- macOS handler (.app bundle) -->
+    <Content Include="NxmHandler\ModdyNxmHandler.app\**\*" CopyToOutputDirectory="PreserveNewest" Link="NxmHandler\ModdyNxmHandler.app\%(RecursiveDir)%(Filename)%(Extension)" />
+    <!-- Windows handler -->
+    <None Include="NxmHandler\nxm-handler.bat" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Linux handler -->
+    <None Include="NxmHandler\nxm-handler.sh" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="FixNxmHandlerPerms" AfterTargets="Build" Condition="$([MSBuild]::IsOSPlatform('osx'))">
+    <Exec Command="chmod +x &quot;$(OutputPath)NxmHandler/ModdyNxmHandler.app/Contents/MacOS/nxm-handler&quot;" IgnoreExitCode="true" />
+    <Exec Command="chmod +x &quot;$(OutputPath)NxmHandler/nxm-handler.sh&quot;" IgnoreExitCode="true" />
+  </Target>
+</Project>

@@ -1,0 +1,17 @@
+bin/
+obj/
+
+# Runtime artifacts
+cache/
+registry.json
+*.old
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
+
+# macOS
+.DS_Store

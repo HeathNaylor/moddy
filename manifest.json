@@ -1,0 +1,10 @@
+{
+  "Name": "Moddy",
+  "Author": "KHGames",
+  "Version": "1.0.0",
+  "Description": "In-game mod browser for Stardew Valley. Browse, install, update, and uninstall mods without leaving the game.",
+  "UniqueID": "khgames.Moddy",
+  "EntryDll": "Moddy.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": []
+}

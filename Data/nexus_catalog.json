@@ -1,0 +1,416 @@
+[
+  {
+    "source": "Nexus",
+    "nexusModId": 3753,
+    "displayName": "Stardew Valley Expanded",
+    "description": "A massive expansion featuring new locations, characters, events, quests, and farm maps.",
+    "uniqueID": "FlashShifter.StardewValleyExpandedCP",
+    "author": "FlashShifter",
+    "endorsements": 12000
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 4,
+    "displayName": "CJB Cheats Menu",
+    "description": "A simple in-game cheats menu with options for time, weather, warps, relationships, and more.",
+    "uniqueID": "CJBok.CheatsMenu",
+    "author": "CJBok",
+    "endorsements": 7500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 7636,
+    "displayName": "Ridgeside Village",
+    "description": "A large expansion adding a new village with 50+ NPCs, festivals, quests, and locations.",
+    "uniqueID": "Rafseazz.RSVCP",
+    "author": "Rafseazz",
+    "endorsements": 5000
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1915,
+    "displayName": "Content Patcher",
+    "description": "Loads content packs that change the game's data, images, and maps without replacing game files.",
+    "uniqueID": "Pathoschild.ContentPatcher",
+    "author": "Pathoschild",
+    "endorsements": 4200
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1063,
+    "displayName": "Automate",
+    "description": "Place a chest next to machines and they'll automatically pull items from it and push output into it.",
+    "uniqueID": "Pathoschild.Automate",
+    "author": "Pathoschild",
+    "endorsements": 3900
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 5098,
+    "displayName": "Generic Mod Config Menu",
+    "description": "Adds an in-game UI to edit other mods' config options. Works for any mod that uses SMAPI's config API.",
+    "uniqueID": "spacechase0.GenericModConfigMenu",
+    "author": "spacechase0",
+    "endorsements": 3800
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 239,
+    "displayName": "NPC Map Locations",
+    "description": "Shows NPC locations on the map in real time, with customizable tracking and minimap support.",
+    "uniqueID": "Bouhm.NPCMapLocations",
+    "author": "Bouhm",
+    "endorsements": 3600
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 541,
+    "displayName": "Lookup Anything",
+    "description": "See live info about whatever's under your cursor. Works on NPCs, animals, crops, items, and more.",
+    "uniqueID": "Pathoschild.LookupAnything",
+    "author": "Pathoschild",
+    "endorsements": 3500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 8097,
+    "displayName": "East Scarp",
+    "description": "A new area expansion east of Pelican Town with new NPCs, events, and locations.",
+    "uniqueID": "lemurkat.EastScarp",
+    "author": "lemurkat",
+    "endorsements": 3500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1401,
+    "displayName": "Tractor Mod",
+    "description": "Buy a tractor garage to get a tractor that can till, plant, water, fertilize, harvest, and more.",
+    "uniqueID": "Pathoschild.TractorMod",
+    "author": "Pathoschild",
+    "endorsements": 3300
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 93,
+    "displayName": "CJB Item Spawner",
+    "description": "An in-game item spawner menu that lets you add any item directly to your inventory.",
+    "uniqueID": "CJBok.ItemSpawner",
+    "author": "CJBok",
+    "endorsements": 3200
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 518,
+    "displayName": "Chests Anywhere",
+    "description": "Access your chests from anywhere and organize them by name, category, or location.",
+    "uniqueID": "Pathoschild.ChestsAnywhere",
+    "author": "Pathoschild",
+    "endorsements": 3100
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 533,
+    "displayName": "Skip Intro",
+    "description": "Skips the game intro, splash screens, and loading screen to save time launching the game.",
+    "uniqueID": "Pathoschild.SkipIntro",
+    "author": "Pathoschild",
+    "endorsements": 2200
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1150,
+    "displayName": "Better Sprinklers",
+    "description": "Lets you configure sprinkler coverage to any shape and range you like.",
+    "uniqueID": "Speeder.BetterSprinklers",
+    "author": "Speeder",
+    "endorsements": 2100
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1720,
+    "displayName": "Json Assets",
+    "description": "Allows content packs to add new items, crops, fruit trees, and crafting recipes via JSON.",
+    "uniqueID": "spacechase0.JsonAssets",
+    "author": "spacechase0",
+    "endorsements": 1900
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1691,
+    "displayName": "Data Layers",
+    "description": "Overlays the world with visual data layers showing accessibility, crop details, and more.",
+    "uniqueID": "Pathoschild.DataLayers",
+    "author": "Pathoschild",
+    "endorsements": 1800
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 2270,
+    "displayName": "Wear More Rings",
+    "description": "Allows you to wear more than two rings at a time with additional ring slots.",
+    "uniqueID": "bcmpinc.WearMoreRings",
+    "author": "bcmpinc",
+    "endorsements": 1800
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 2514,
+    "displayName": "Immersive Farm 2 Remastered",
+    "description": "A beautifully remastered version of the Immersive Farm 2 map with enhanced detail.",
+    "uniqueID": "flashshifter.immersivefarm2remastered",
+    "author": "FlashShifter",
+    "endorsements": 1800
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 580,
+    "displayName": "Gift Taste Helper",
+    "description": "Displays NPC gift preferences when hovering over their birthday on the calendar or social tab.",
+    "uniqueID": "tstaples.GiftTasteHelper",
+    "author": "tstaples",
+    "endorsements": 1700
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1348,
+    "displayName": "SpaceCore",
+    "description": "A framework mod providing common utilities and APIs used by spacechase0's other mods.",
+    "uniqueID": "spacechase0.SpaceCore",
+    "author": "spacechase0",
+    "endorsements": 1600
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1726,
+    "displayName": "Better Ranching",
+    "description": "Prevents failed milking/shearing attempts by showing icons when animals can be interacted with.",
+    "uniqueID": "BetterRanching",
+    "author": "Urbanyeti",
+    "endorsements": 1500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 4970,
+    "displayName": "Alternative Textures",
+    "description": "Allows content packs to provide alternate textures for buildings, craftables, and more.",
+    "uniqueID": "PeacefulEnd.AlternativeTextures",
+    "author": "PeacefulEnd",
+    "endorsements": 1500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 2400,
+    "displayName": "Better Artisan Good Icons",
+    "description": "Makes artisan goods like wine and jelly display the source item on their icon.",
+    "uniqueID": "cat.betterartisangoodicons",
+    "author": "mouse",
+    "endorsements": 1400
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1254,
+    "displayName": "Experience Bars",
+    "description": "Shows experience bars for each skill on the HUD so you can track progress.",
+    "uniqueID": "spacechase0.ExperienceBars",
+    "author": "spacechase0",
+    "endorsements": 1400
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 3531,
+    "displayName": "Skull Cavern Elevator",
+    "description": "Adds an elevator to the Skull Cavern, similar to the one in the mines.",
+    "uniqueID": "SkullCavernElevator",
+    "author": "lestoph",
+    "endorsements": 1300
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 866,
+    "displayName": "Happy Birthday",
+    "description": "Adds a birthday event for your farmer. NPCs will celebrate with gifts and dialogue.",
+    "uniqueID": "Omegasis.HappyBirthday",
+    "author": "Omegasis",
+    "endorsements": 1200
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1538,
+    "displayName": "Prismatic Tools",
+    "description": "Adds a tier of tools beyond iridium using prismatic shards, with enhanced effects.",
+    "uniqueID": "stokastic.PrismaticTools",
+    "author": "stokastic",
+    "endorsements": 1100
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1935,
+    "displayName": "Bigger Backpack",
+    "description": "Adds a fourth backpack upgrade with 48 inventory slots, purchasable from Pierre's shop.",
+    "uniqueID": "spacechase0.BiggerBackpack",
+    "author": "spacechase0",
+    "endorsements": 1100
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1229,
+    "displayName": "Seasonal Outfits",
+    "description": "NPCs change their outfits based on the current season for more variety.",
+    "uniqueID": "ApryllForever.SeasonalOutfits",
+    "author": "ApryllForever",
+    "endorsements": 1000
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 521,
+    "displayName": "Animal Sitter",
+    "description": "Automatically pets and tends to all your animals each morning so you don't have to.",
+    "uniqueID": "jwdred.AnimalSitter",
+    "author": "jwdred",
+    "endorsements": 900
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 6104,
+    "displayName": "Stardew Aquarium",
+    "description": "Adds a fully functional aquarium location to collect and display fish from around the valley.",
+    "uniqueID": "Cherry.StardewAquarium",
+    "author": "Cherry",
+    "endorsements": 800
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1820,
+    "displayName": "Part of the Community",
+    "description": "Earn friendship points by completing daily activities in town like shopping and visiting NPCs.",
+    "uniqueID": "SB_PartOfTheCommunity",
+    "author": "Surrenderborn",
+    "endorsements": 800
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 2668,
+    "displayName": "Crop Transplant Mod",
+    "description": "Pick up and move planted crops and fruit trees without destroying them.",
+    "uniqueID": "cat.croptransplantmod",
+    "author": "mouse",
+    "endorsements": 800
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 4379,
+    "displayName": "Custom Companions",
+    "description": "A framework that allows modders to add companion NPCs that follow you around.",
+    "uniqueID": "PeacefulEnd.CustomCompanions",
+    "author": "PeacefulEnd",
+    "endorsements": 700
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1096,
+    "displayName": "Pelican Fiber",
+    "description": "Buy from Robin, Pierre, and other shops directly from your home computer.",
+    "uniqueID": "jwdred.PelicanFiber",
+    "author": "jwdred",
+    "endorsements": 700
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 2092,
+    "displayName": "Horses Stay Out",
+    "description": "Prevents your horse from being warped to the stable, keeping it where you leave it.",
+    "uniqueID": "Goldenrevolver.HorsesStayOut",
+    "author": "Goldenrevolver",
+    "endorsements": 600
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 2731,
+    "displayName": "Expanded Preconditions Utility",
+    "description": "A framework providing expanded event precondition checks for other mods to use.",
+    "uniqueID": "Cherry.ExpandedPreconditionsUtility",
+    "author": "Cherry",
+    "endorsements": 600
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 3104,
+    "displayName": "Destroyable Bushes",
+    "description": "Lets you destroy bushes with an axe, allowing full control over your farm layout.",
+    "uniqueID": "cat.destroyablebushes",
+    "author": "mouse",
+    "endorsements": 600
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 1603,
+    "displayName": "Custom Farming Redux",
+    "description": "Allows modders to add custom machines and processing equipment via content packs.",
+    "uniqueID": "Platonymous.CustomFarming",
+    "author": "Platonymous",
+    "endorsements": 600
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 7286,
+    "displayName": "Automate Fishing",
+    "description": "Automatically catches fish while you stand near water with a fishing rod equipped.",
+    "uniqueID": "BitwiseJon.AutoFishing",
+    "author": "BitwiseJon",
+    "endorsements": 600
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 3272,
+    "displayName": "Mail Framework Mod",
+    "description": "A framework allowing mods to send custom mail with items and recipes to the player.",
+    "uniqueID": "DIGUS.MailFrameworkMod",
+    "author": "DIGUS",
+    "endorsements": 500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 4210,
+    "displayName": "Producer Framework Mod",
+    "description": "A framework that allows content packs to add custom producer machines and rules.",
+    "uniqueID": "Digus.ProducerFrameworkMod",
+    "author": "DIGUS",
+    "endorsements": 500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 2334,
+    "displayName": "Item Recovery",
+    "description": "Recover items lost when you pass out or die in the mines, purchasable from a recovery service.",
+    "uniqueID": "cat.itemrecovery",
+    "author": "mouse",
+    "endorsements": 500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 6356,
+    "displayName": "Train Station",
+    "description": "Adds a train station hub map used by many expansion mods for travel between locations.",
+    "uniqueID": "Cherry.TrainStation",
+    "author": "Cherry",
+    "endorsements": 500
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 2118,
+    "displayName": "Custom NPC Fixes",
+    "description": "Fixes issues with custom NPCs in festivals, schedules, and social menus.",
+    "uniqueID": "spacechase0.CustomNPCFixes",
+    "author": "spacechase0",
+    "endorsements": 400
+  },
+  {
+    "source": "Nexus",
+    "nexusModId": 4228,
+    "displayName": "Farming Simulator",
+    "description": "Overhauls farming mechanics with soil quality, advanced crop growth, and realistic seasons.",
+    "uniqueID": "Satozaki.FarmingSim",
+    "author": "Satozaki",
+    "endorsements": 400
+  }
+]

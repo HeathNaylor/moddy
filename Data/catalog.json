@@ -1,0 +1,127 @@
+[
+  {
+    "owner": "Annosz",
+    "repo": "UIInfoSuite2",
+    "displayName": "UI Info Suite 2",
+    "description": "Adds useful information to the user interface. Based on the original UI Info Suite.",
+    "uniqueID": "Annosz.UiInfoSuite2",
+    "stars": 1752
+  },
+  {
+    "owner": "stardew-access",
+    "repo": "stardew-access",
+    "displayName": "Stardew Access",
+    "description": "An accessibility mod for Stardew Valley with screen reader and keyboard-only support.",
+    "uniqueID": "shoaib.stardewaccess",
+    "stars": 94
+  },
+  {
+    "owner": "Esca-MMC",
+    "repo": "FarmTypeManager",
+    "displayName": "Farm Type Manager",
+    "description": "Allows custom spawning of forage, large objects, ore, and monsters from each farm type.",
+    "uniqueID": "Esca.FarmTypeManager",
+    "stars": 25
+  },
+  {
+    "owner": "KhloeLeclair",
+    "repo": "StardewMods",
+    "displayName": "Better Game Menu",
+    "description": "Replaces the vanilla game menu with an improved reimplementation that improves performance and provides an easy API for other mods.",
+    "uniqueID": "leclair.bettergamemenu",
+    "stars": 24,
+    "assetFilter": "BetterGameMenu"
+  },
+  {
+    "owner": "Shockah",
+    "repo": "Stardew-Valley-Mods",
+    "displayName": "Project Fluent",
+    "description": "A modern localization and translation framework for Stardew Valley mods.",
+    "uniqueID": "Shockah.ProjectFluent",
+    "stars": 13,
+    "assetFilter": "ProjectFluent"
+  },
+  {
+    "owner": "Shockah",
+    "repo": "Stardew-Valley-Mods",
+    "displayName": "Kokoro",
+    "description": "A core mod for Shockah's Stardew Valley mods.",
+    "uniqueID": "Shockah.Kokoro",
+    "stars": 13,
+    "assetFilter": "Kokoro"
+  },
+  {
+    "owner": "DecidedlyHuman",
+    "repo": "StardewValleyMods",
+    "displayName": "Smart Building",
+    "description": "Allows you to build fences, walls, paths, and more in a much more streamlined way, similar to Terraria's smart cursor.",
+    "uniqueID": "DecidedlyHuman.SmartBuilding",
+    "stars": 8,
+    "assetFilter": "SmartBuilding"
+  },
+  {
+    "owner": "DecidedlyHuman",
+    "repo": "StardewValleyMods",
+    "displayName": "Mapping Extensions and Extra Properties (MEEP)",
+    "description": "Extra map features and tile/map properties to spice up your custom maps.",
+    "uniqueID": "DecidedlyHuman.MappingExtensionsAndExtraProperties",
+    "stars": 8,
+    "assetFilter": "MappingExtensionsAndExtraProperties"
+  },
+  {
+    "owner": "NermNermNerm",
+    "repo": "Junimatic",
+    "displayName": "Junimatic",
+    "description": "Allows you to automate repetitive tasks with a little help from the Junimos. A balanced alternative to Automate.",
+    "uniqueID": "NermNermNerm.Junimatic",
+    "stars": 6
+  },
+  {
+    "owner": "Esca-MMC",
+    "repo": "CustomNPCExclusions",
+    "displayName": "Custom NPC Exclusions",
+    "description": "Allows modders to exclude custom NPCs from quests and events via Content Patcher.",
+    "uniqueID": "Esca.CustomNPCExclusions",
+    "stars": 4
+  },
+  {
+    "owner": "LeFauxMatt",
+    "repo": "CarryChests",
+    "displayName": "Carry Chests",
+    "description": "Allows placed chests to be picked up and carried with their contents intact.",
+    "uniqueID": "furyx639.CarryChests",
+    "stars": 2
+  },
+  {
+    "owner": "Esca-MMC",
+    "repo": "EscasModdingPlugins",
+    "displayName": "Esca's Modding Plugins (EMP)",
+    "description": "A framework that adds miscellaneous data assets, map/tile properties, and features for other mods to use.",
+    "uniqueID": "Esca.EMP",
+    "stars": 1
+  },
+  {
+    "owner": "LeFauxMatt",
+    "repo": "CustomBush",
+    "displayName": "Custom Bush",
+    "description": "Framework which allows custom bushes to be added to the game that work like the tea sapling.",
+    "uniqueID": "furyx639.CustomBush",
+    "stars": 1
+  },
+  {
+    "owner": "Esca-MMC",
+    "repo": "BuildOnAnyTile",
+    "displayName": "Build On Any Tile",
+    "description": "Allows buildings to be placed on any tile, even if obstructed by terrain or other buildings.",
+    "uniqueID": "Esca.BuildOnAnyTile",
+    "stars": 1
+  },
+  {
+    "owner": "LeFauxMatt",
+    "repo": "ExpandedStorage",
+    "displayName": "Expanded Storage",
+    "description": "Framework for adding new types of chests to the game.",
+    "uniqueID": "furyx639.ExpandedStorage",
+    "stars": 0
+  }
+]
