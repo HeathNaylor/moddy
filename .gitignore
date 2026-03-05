@@ -13,5 +13,8 @@ registry.json
 *.suo
 *.DotSettings.user
 
+# Claude
+CLAUDE.md
+
 # macOS
 .DS_Store

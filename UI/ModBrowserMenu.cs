@@ -54,6 +54,16 @@ namespace Moddy.UI
         // Source filter tab labels
         private static readonly string[] TabLabels = { "All", "GitHub", "Nexus" };
 
+        // Controller state
+        private enum DetailAction { PrimaryAction, Uninstall, ToggleAutoUpdate, ToggleLockVersion }
+        private GamePadState _prevGamePadState;
+        private bool _detailFocused;
+        private int _detailButtonIndex;
+        private float _gamepadRepeatTimer;
+        private float _gamepadHeldTime;
+        private const float GamepadInitialDelay = 0.4f;
+        private const float GamepadRepeatDelay = 0.2f;
+
         // Layout
         private Rectangle _panelBounds;
         private Rectangle _listBounds;
@@ -122,6 +132,9 @@ namespace Moddy.UI
             RefreshInstalledMods();
             MergeInstalledMods();
             ApplyFilter();
+
+            // Check for updates every time the menu opens
+            _ = UpdateChecker.CheckAllAsync();
         }
 
         private void LoadCatalog()
@@ -275,7 +288,12 @@ namespace Moddy.UI
                         {
                             var releases = await GitHubApiClient.GetReleasesAsync(owner, repo);
                             var latest = releases?.FirstOrDefault(r => !r.Draft && !r.Prerelease);
-                            _gameThreadActions.Enqueue(() => _latestReleases[key] = latest);
+                            _gameThreadActions.Enqueue(() =>
+                            {
+                                _latestReleases[key] = latest;
+                                if (latest != null)
+                                    UpdateChecker.LatestReleases[key] = latest;
+                            });
                         }
                         catch (Exception ex)
                         {
@@ -310,7 +328,17 @@ namespace Moddy.UI
                             try
                             {
                                 var files = await NexusApiClient.GetModFilesAsync(modId);
-                                _gameThreadActions.Enqueue(() => _nexusModFiles[modId] = files);
+                                _gameThreadActions.Enqueue(() =>
+                                {
+                                    _nexusModFiles[modId] = files;
+                                    if (files != null)
+                                    {
+                                        var mf = files.FirstOrDefault(f =>
+                                            "MAIN".Equals(f.CategoryName, StringComparison.OrdinalIgnoreCase));
+                                        if (mf != null)
+                                            UpdateChecker.LatestNexusVersions[$"nexus:{modId}"] = mf.Version;
+                                    }
+                                });
                             }
                             catch (Exception ex)
                             {
@@ -349,6 +377,12 @@ namespace Moddy.UI
             // Clear expired status
             if (!string.IsNullOrEmpty(_statusMessage) && DateTime.UtcNow > _statusExpiry)
                 _statusMessage = "";
+
+            // Controller/gamepad input
+            var gamePadState = GamePad.GetState(PlayerIndex.One);
+            if (gamePadState.IsConnected)
+                HandleGamepadInput(gamePadState, time);
+            _prevGamePadState = gamePadState;
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
@@ -727,6 +761,298 @@ namespace Moddy.UI
             }
         }
 
+        private void HandleGamepadInput(GamePadState state, GameTime time)
+        {
+            var prev = _prevGamePadState;
+
+            // Bumpers for tab switching
+            if (state.Buttons.LeftShoulder == ButtonState.Pressed && prev.Buttons.LeftShoulder == ButtonState.Released)
+                SwitchTab(-1);
+            if (state.Buttons.RightShoulder == ButtonState.Pressed && prev.Buttons.RightShoulder == ButtonState.Released)
+                SwitchTab(1);
+
+            // B button to close or go back
+            if (state.Buttons.B == ButtonState.Pressed && prev.Buttons.B == ButtonState.Released)
+            {
+                if (_detailFocused)
+                {
+                    _detailFocused = false;
+                    Game1.playSound("smallSelect");
+                }
+                else
+                {
+                    Game1.playSound("bigDeSelect");
+                    TitleMenu.subMenu = null;
+                }
+                return;
+            }
+
+            // D-pad / left stick directions
+            bool upPressed = state.DPad.Up == ButtonState.Pressed || state.ThumbSticks.Left.Y > 0.3f;
+            bool downPressed = state.DPad.Down == ButtonState.Pressed || state.ThumbSticks.Left.Y < -0.3f;
+            bool leftPressed = state.DPad.Left == ButtonState.Pressed || state.ThumbSticks.Left.X < -0.3f;
+            bool rightPressed = state.DPad.Right == ButtonState.Pressed || state.ThumbSticks.Left.X > 0.3f;
+
+            bool anyDirection = upPressed || downPressed || leftPressed || rightPressed;
+
+            // Repeat timing for held directions
+            bool prevUp = prev.DPad.Up == ButtonState.Pressed || prev.ThumbSticks.Left.Y > 0.3f;
+            bool prevDown = prev.DPad.Down == ButtonState.Pressed || prev.ThumbSticks.Left.Y < -0.3f;
+            bool prevLeft = prev.DPad.Left == ButtonState.Pressed || prev.ThumbSticks.Left.X < -0.3f;
+            bool prevRight = prev.DPad.Right == ButtonState.Pressed || prev.ThumbSticks.Left.X > 0.3f;
+            bool prevAnyDirection = prevUp || prevDown || prevLeft || prevRight;
+
+            bool newPress = anyDirection && !prevAnyDirection;
+
+            if (anyDirection)
+            {
+                _gamepadHeldTime += (float)time.ElapsedGameTime.TotalSeconds;
+            }
+            else
+            {
+                _gamepadHeldTime = 0;
+                _gamepadRepeatTimer = 0;
+            }
+
+            bool shouldAct = false;
+            if (newPress)
+            {
+                shouldAct = true;
+                _gamepadRepeatTimer = GamepadInitialDelay;
+            }
+            else if (anyDirection)
+            {
+                _gamepadRepeatTimer -= (float)time.ElapsedGameTime.TotalSeconds;
+                if (_gamepadRepeatTimer <= 0)
+                {
+                    shouldAct = true;
+                    _gamepadRepeatTimer = GamepadRepeatDelay;
+                }
+            }
+
+            if (shouldAct)
+            {
+                if (_detailFocused)
+                {
+                    if (upPressed) NavigateDetailButton(-1);
+                    if (downPressed) NavigateDetailButton(1);
+                    if (leftPressed)
+                    {
+                        _detailFocused = false;
+                        Game1.playSound("smallSelect");
+                    }
+                }
+                else
+                {
+                    if (upPressed) NavigateList(-1);
+                    if (downPressed) NavigateList(1);
+                    if (rightPressed && _selectedIndex >= 0 && SelectedEntry?.IsFromCatalog == true)
+                    {
+                        _detailFocused = true;
+                        _detailButtonIndex = 0;
+                        Game1.playSound("smallSelect");
+                    }
+                }
+            }
+
+            // A button to activate
+            if (state.Buttons.A == ButtonState.Pressed && prev.Buttons.A == ButtonState.Released)
+            {
+                if (_detailFocused)
+                {
+                    ActivateDetailButton();
+                }
+                else if (_selectedIndex >= 0 && SelectedEntry?.IsFromCatalog == true)
+                {
+                    _detailFocused = true;
+                    _detailButtonIndex = 0;
+                    Game1.playSound("smallSelect");
+                }
+            }
+        }
+
+        private void SwitchTab(int direction)
+        {
+            int currentTab = _sourceFilter switch
+            {
+                null => 0,
+                ModSource.GitHub => 1,
+                ModSource.Nexus => 2,
+                _ => 0
+            };
+
+            currentTab = (currentTab + direction + TabLabels.Length) % TabLabels.Length;
+            _sourceFilter = currentTab switch
+            {
+                1 => ModSource.GitHub,
+                2 => ModSource.Nexus,
+                _ => null
+            };
+
+            Game1.playSound("smallSelect");
+            ApplyFilter();
+            FetchDetailsForVisible();
+            _detailFocused = false;
+        }
+
+        private void NavigateList(int direction)
+        {
+            if (_filteredCatalog.Count == 0) return;
+
+            if (_selectedIndex < 0)
+                _selectedIndex = direction > 0 ? 0 : _filteredCatalog.Count - 1;
+            else
+                _selectedIndex = Math.Clamp(_selectedIndex + direction, 0, _filteredCatalog.Count - 1);
+
+            _detailFocused = false;
+            EnsureSelectedVisible();
+            FetchDetailsForVisible();
+            Game1.playSound("smallSelect");
+        }
+
+        private void EnsureSelectedVisible()
+        {
+            if (_selectedIndex < 0) return;
+            int itemTop = _selectedIndex * UIConstants.RowHeight;
+            int itemBottom = itemTop + UIConstants.RowHeight;
+
+            if (itemTop < _scrollOffset)
+                _scrollOffset = itemTop;
+            else if (itemBottom > _scrollOffset + _visibleListHeight)
+                _scrollOffset = itemBottom - _visibleListHeight;
+
+            ClampScroll();
+        }
+
+        private void NavigateDetailButton(int direction)
+        {
+            var actions = GetAvailableDetailActions();
+            if (actions.Count == 0) return;
+            _detailButtonIndex = Math.Clamp(_detailButtonIndex + direction, 0, actions.Count - 1);
+            Game1.playSound("smallSelect");
+        }
+
+        private List<DetailAction> GetAvailableDetailActions()
+        {
+            var actions = new List<DetailAction>();
+            var entry = SelectedEntry;
+            if (entry == null || !entry.IsFromCatalog) return actions;
+
+            var info = _registry.Get(entry.CatalogKey);
+            bool isInstalled = info != null || _installedMods.ContainsKey(entry.UniqueID);
+
+            actions.Add(DetailAction.PrimaryAction);
+            if (isInstalled) actions.Add(DetailAction.Uninstall);
+            if (info != null)
+            {
+                actions.Add(DetailAction.ToggleAutoUpdate);
+                actions.Add(DetailAction.ToggleLockVersion);
+            }
+            return actions;
+        }
+
+        private void ActivateDetailButton()
+        {
+            var entry = SelectedEntry;
+            if (entry == null || !entry.IsFromCatalog || _isBusy) return;
+
+            var actions = GetAvailableDetailActions();
+            if (_detailButtonIndex >= actions.Count) return;
+
+            var action = actions[_detailButtonIndex];
+            var info = _registry.Get(entry.CatalogKey);
+            bool isInstalled = info != null || _installedMods.ContainsKey(entry.UniqueID);
+
+            switch (action)
+            {
+                case DetailAction.PrimaryAction:
+                    if (entry.Source == ModSource.Nexus)
+                    {
+                        if (!isInstalled || HasNexusUpdate(entry))
+                        {
+                            if (NexusApiClient.IsPremium)
+                                DoNexusInstall(entry);
+                            else
+                            {
+                                var url = $"https://www.nexusmods.com/stardewvalley/mods/{entry.NexusModId}?tab=files";
+                                try
+                                {
+                                    Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+                                    SetStatus("Opened in browser. Click 'Download with Manager'.");
+                                }
+                                catch { SetStatus("Failed to open browser."); }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _latestReleases.TryGetValue(entry.CatalogKey, out var latest);
+                        bool hasUpdate = info != null && latest != null &&
+                            UpdateChecker.IsUpdateAvailable(entry.CatalogKey, info.InstalledVersion);
+                        if ((!isInstalled || hasUpdate) && latest != null)
+                            DoInstall(entry, latest);
+                    }
+                    break;
+                case DetailAction.Uninstall:
+                    DoUninstall(entry);
+                    break;
+                case DetailAction.ToggleAutoUpdate:
+                    if (info != null)
+                    {
+                        info.AutoUpdate = !info.AutoUpdate;
+                        _registry.Save();
+                        Game1.playSound("drumkit6");
+                    }
+                    break;
+                case DetailAction.ToggleLockVersion:
+                    if (info != null)
+                    {
+                        info.LockedVersion = info.LockedVersion != null ? null : info.InstalledVersion;
+                        _registry.Save();
+                        Game1.playSound("drumkit6");
+                    }
+                    break;
+            }
+        }
+
+        private Rectangle GetDetailButtonRect(int index, List<DetailAction> actions)
+        {
+            if (index >= actions.Count) return Rectangle.Empty;
+
+            int btnWidth = 200;
+            int btnHeight = 48;
+            int btnX = _detailBounds.X + (_detailBounds.Width - btnWidth) / 2;
+            int btnY = _detailButtonY;
+
+            return actions[index] switch
+            {
+                DetailAction.PrimaryAction => new Rectangle(btnX, btnY, btnWidth, btnHeight),
+                DetailAction.Uninstall => new Rectangle(btnX, btnY + 56, btnWidth, btnHeight),
+                DetailAction.ToggleAutoUpdate => new Rectangle(_detailBounds.X + 16, btnY + 124, _detailBounds.Width - 32, 36),
+                DetailAction.ToggleLockVersion => new Rectangle(_detailBounds.X + 16, btnY + 164, _detailBounds.Width - 32, 36),
+                _ => Rectangle.Empty
+            };
+        }
+
+        private void DrawDetailFocusHighlight(SpriteBatch b)
+        {
+            var actions = GetAvailableDetailActions();
+            if (_detailButtonIndex >= actions.Count) return;
+
+            var rect = GetDetailButtonRect(_detailButtonIndex, actions);
+            if (rect.Width == 0) return;
+
+            int border = 3;
+            // Top
+            b.Draw(Game1.fadeToBlackRect, new Rectangle(rect.X - border, rect.Y - border, rect.Width + border * 2, border), UIConstants.TextGold);
+            // Bottom
+            b.Draw(Game1.fadeToBlackRect, new Rectangle(rect.X - border, rect.Bottom, rect.Width + border * 2, border), UIConstants.TextGold);
+            // Left
+            b.Draw(Game1.fadeToBlackRect, new Rectangle(rect.X - border, rect.Y, border, rect.Height), UIConstants.TextGold);
+            // Right
+            b.Draw(Game1.fadeToBlackRect, new Rectangle(rect.Right, rect.Y, border, rect.Height), UIConstants.TextGold);
+        }
+
         public override void draw(SpriteBatch b)
         {
             // Dark overlay
@@ -761,7 +1087,11 @@ namespace Moddy.UI
 
             // Detail panel
             if (SelectedEntry != null)
+            {
                 DrawDetailPanel(b);
+                if (_detailFocused)
+                    DrawDetailFocusHighlight(b);
+            }
 
             // Status message / pending installs
             {
