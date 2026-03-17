@@ -317,10 +317,10 @@
   {
     "source": "Nexus",
     "nexusModId": 2092,
-    "displayName": "Horses Stay Out",
-    "description": "Prevents your horse from being warped to the stable, keeping it where you leave it.",
-    "uniqueID": "Goldenrevolver.HorsesStayOut",
-    "author": "Goldenrevolver",
+    "displayName": "Chat Commands",
+    "description": "Run SMAPI commands from the in-game chat window. Adds scrolling, command history, and better text entry.",
+    "uniqueID": "cat.chatcommands",
+    "author": "Cat",
     "endorsements": 600
   },
   {

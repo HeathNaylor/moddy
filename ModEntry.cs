@@ -77,6 +77,29 @@ namespace Moddy
 
             // Initialize registry for nxm installs
             _registry = new ModRegistry(ModDirectoryPath);
+
+            // Auto-register Moddy itself so it can self-update
+            EnsureSelfRegistered(_registry);
+        }
+
+        private void EnsureSelfRegistered(ModRegistry registry)
+        {
+            const string catalogKey = "HeathNaylor/moddy";
+            if (registry.Get(catalogKey) != null)
+                return;
+
+            registry.Register(catalogKey, new InstalledModInfo
+            {
+                CatalogKey = catalogKey,
+                UniqueID = ModManifest.UniqueID,
+                InstalledVersion = ModManifest.Version.ToString(),
+                InstalledFolderName = Path.GetFileName(ModDirectoryPath),
+                InstalledAt = DateTime.UtcNow,
+                AutoUpdate = true,
+                Source = ModSource.GitHub
+            });
+
+            Logger.Log("Registered Moddy for self-updates", LogLevel.Debug);
         }
 
         private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
